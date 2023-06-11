@@ -1,0 +1,50 @@
+﻿@page
+@model ProvidersBase.Pages.Providers.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>ProviderCompany</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ProviderCompany.Id" />
+            <div class="form-group">
+                <label asp-for="ProviderCompany.CompanyTitle" class="control-label"></label>
+                <input asp-for="ProviderCompany.CompanyTitle" class="form-control" />
+                <span asp-validation-for="ProviderCompany.CompanyTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProviderCompany.INN" class="control-label"></label>
+                <input asp-for="ProviderCompany.INN" class="form-control" />
+                <span asp-validation-for="ProviderCompany.INN" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProviderCompany.Email" class="control-label"></label>
+                <input asp-for="ProviderCompany.Email" class="form-control" />
+                <span asp-validation-for="ProviderCompany.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProviderCompany.Address" class="control-label"></label>
+                <input asp-for="ProviderCompany.Address" class="form-control" />
+                <span asp-validation-for="ProviderCompany.Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

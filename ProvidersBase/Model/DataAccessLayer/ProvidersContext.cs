@@ -28,7 +28,10 @@ namespace ProvidersBase.Model.DataAccessLayer
         /// The DbSet for the <see cref="ProviderProduct"/> table.
         /// </summary>
         public DbSet<ProviderProduct> Products { get; set; }
-
+        /// <summary>
+        /// // Configures the relationships between the tables using fluent API.
+        /// </summary>
+        /// <param name="modelBuilder">The builder to use for configuring the relationships.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //This code sets up the One-to-Many relationships between the entities in the database using a Foreign Key constraint.
