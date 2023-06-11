@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +9,9 @@ namespace ProvidersBase.Pages.Products
 {
     public class EditModel : PageModel
     {
-        private readonly ProvidersBase.Model.DataAccessLayer.ProvidersContext _context;
+        private readonly ProvidersContext _context;
 
-        public EditModel(ProvidersBase.Model.DataAccessLayer.ProvidersContext context)
+        public EditModel(ProvidersContext context)
         {
             _context = context;
         }
@@ -36,38 +32,21 @@ namespace ProvidersBase.Pages.Products
                 return NotFound();
             }
             ProviderProduct = providerproduct;
-           ViewData["ProviderId"] = new SelectList(_context.Providers, "Id", "Address");
+            ViewData["ProviderId"] = new SelectList(_context.Providers, "Id", "CompanyTitle");
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        
+        public async Task<IActionResult> OnPostAsync(ProviderProduct providerProduct)
         {
-            if (!ModelState.IsValid)
+            if (providerProduct == null)
             {
                 return Page();
             }
-
-            _context.Attach(ProviderProduct).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProviderProductExists(ProviderProduct.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            _context.Products.Update(providerProduct);
+            await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
+
         }
 
         private bool ProviderProductExists(int id)

@@ -1,43 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProvidersBase.Model.DataAccessLayer;
 using ProvidersBase.Model.Models;
+using ProvidersBase.Model.ViewModels;
 
 namespace ProvidersBase.Pages.Products
 {
     public class CreateModel : PageModel
     {
-        private readonly ProvidersBase.Model.DataAccessLayer.ProvidersContext _context;
+        private readonly ProvidersContext _context;
 
-        public CreateModel(ProvidersBase.Model.DataAccessLayer.ProvidersContext context)
+        public CreateModel(ProvidersContext context)
         {
             _context = context;
         }
 
         public IActionResult OnGet()
         {
-        ViewData["ProviderId"] = new SelectList(_context.Providers, "Id", "Address");
+            ViewData["ProviderId"] = new SelectList(_context.Providers, "Id", "CompanyTitle");
             return Page();
         }
 
         [BindProperty]
-        public ProviderProduct ProviderProduct { get; set; } = default!;
-        
+        public ProviderProductVM ProviderProductVM { get; set; } = default!;
+
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.Products == null || ProviderProduct == null)
+            if (!ModelState.IsValid || _context.Products == null || ProviderProductVM == null)
             {
+                ViewData["ProviderId"] = new SelectList(_context.Providers, "Id", "CompanyTitle");
                 return Page();
             }
 
-            _context.Products.Add(ProviderProduct);
+            //binding data from the ViewModel to the General model and insert it into the DB
+            var entry = _context.Add(new ProviderProduct());
+            entry.CurrentValues.SetValues(ProviderProductVM);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
