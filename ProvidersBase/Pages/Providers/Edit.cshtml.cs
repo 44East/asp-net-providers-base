@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProvidersBase.Model.DataAccessLayer;
 using ProvidersBase.Model.Models;
@@ -13,9 +8,9 @@ namespace ProvidersBase.Pages.Providers
 {
     public class EditModel : PageModel
     {
-        private readonly ProvidersBase.Model.DataAccessLayer.ProvidersContext _context;
+        private readonly ProvidersContext _context;
 
-        public EditModel(ProvidersBase.Model.DataAccessLayer.ProvidersContext context)
+        public EditModel(ProvidersContext context)
         {
             _context = context;
         }
@@ -30,7 +25,7 @@ namespace ProvidersBase.Pages.Providers
                 return NotFound();
             }
 
-            var providercompany =  await _context.Providers.FirstOrDefaultAsync(m => m.Id == id);
+            var providercompany = await _context.Providers.FirstOrDefaultAsync(m => m.Id == id);
             if (providercompany == null)
             {
                 return NotFound();
@@ -39,8 +34,6 @@ namespace ProvidersBase.Pages.Providers
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -71,7 +64,7 @@ namespace ProvidersBase.Pages.Providers
 
         private bool ProviderCompanyExists(int id)
         {
-          return (_context.Providers?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Providers?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -5,37 +5,36 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Create user</h1>
 
-<h4>ProviderUser</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="ProviderUser.ProviderId" class="control-label"></label>
-                <select asp-for="ProviderUser.ProviderId" class ="form-control" asp-items="ViewBag.ProviderId"></select>
+                <label asp-for="ProviderUserVM.ProviderId" class="control-label"></label>
+                <select asp-for="ProviderUserVM.ProviderId" class ="form-control" asp-items="ViewBag.ProviderId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="ProviderUser.Name" class="control-label"></label>
-                <input asp-for="ProviderUser.Name" class="form-control" />
-                <span asp-validation-for="ProviderUser.Name" class="text-danger"></span>
+                <label asp-for="ProviderUserVM.Name" class="control-label"></label>
+                <input asp-for="ProviderUserVM.Name" class="form-control" />
+                <span asp-validation-for="ProviderUserVM.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ProviderUser.UserName" class="control-label"></label>
-                <input asp-for="ProviderUser.UserName" class="form-control" />
-                <span asp-validation-for="ProviderUser.UserName" class="text-danger"></span>
+                <label asp-for="ProviderUserVM.Username" class="control-label"></label>
+                <input asp-for="ProviderUserVM.Username" class="form-control" />
+                <span asp-validation-for="ProviderUserVM.Username" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ProviderUser.Email" class="control-label"></label>
-                <input asp-for="ProviderUser.Email" class="form-control" />
-                <span asp-validation-for="ProviderUser.Email" class="text-danger"></span>
+                <label asp-for="ProviderUserVM.Email" class="control-label"></label>
+                <input asp-for="ProviderUserVM.Email" class="form-control" />
+                <span asp-validation-for="ProviderUserVM.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ProviderUser.PhoneNumber" class="control-label"></label>
-                <input asp-for="ProviderUser.PhoneNumber" class="form-control" />
-                <span asp-validation-for="ProviderUser.PhoneNumber" class="text-danger"></span>
+                <label asp-for="ProviderUserVM.PhoneNumber" class="control-label"></label>
+                <input asp-for="ProviderUserVM.PhoneNumber" class="form-control" />
+                <span asp-validation-for="ProviderUserVM.PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

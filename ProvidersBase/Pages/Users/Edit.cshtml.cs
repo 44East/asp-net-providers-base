@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +9,9 @@ namespace ProvidersBase.Pages.Users
 {
     public class EditModel : PageModel
     {
-        private readonly ProvidersBase.Model.DataAccessLayer.ProvidersContext _context;
+        private readonly ProvidersContext _context;
 
-        public EditModel(ProvidersBase.Model.DataAccessLayer.ProvidersContext context)
+        public EditModel(ProvidersContext context)
         {
             _context = context;
         }
@@ -30,22 +26,21 @@ namespace ProvidersBase.Pages.Users
                 return NotFound();
             }
 
-            var provideruser =  await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
+            var provideruser = await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
             if (provideruser == null)
             {
                 return NotFound();
             }
             ProviderUser = provideruser;
-           ViewData["ProviderId"] = new SelectList(_context.Providers, "Id", "Address");
+            ViewData["ProviderId"] = new SelectList(_context.Providers, "Id", "CompanyTitle");
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(ProviderUser providerUser)
         {
             if (!ModelState.IsValid)
             {
+                ViewData["ProviderId"] = new SelectList(_context.Providers, "Id", "CompanyTitle");
                 return Page();
             }
 
@@ -72,7 +67,7 @@ namespace ProvidersBase.Pages.Users
 
         private bool ProviderUserExists(int id)
         {
-          return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

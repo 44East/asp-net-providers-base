@@ -2,8 +2,15 @@
 
 namespace ProvidersBase.Model.DataAccessLayer
 {
+    /// <summary>
+    /// The class for filling the DB
+    /// </summary>
     public static class DBInitializer
     {
+        /// <summary>
+        /// Filling method the DB
+        /// </summary>
+        /// <param name="context">Current context</param>
         public static void GenerateTestData(ProvidersContext context)
         {
             if (context.Providers.Any())
@@ -11,7 +18,6 @@ namespace ProvidersBase.Model.DataAccessLayer
                 return; // DB has been seeded
             }
 
-            // Создание тестовых данных для ProviderCompany
             var company1 = new ProviderCompany
             {
                 CompanyTitle = "Company 1",
@@ -31,7 +37,6 @@ namespace ProvidersBase.Model.DataAccessLayer
             context.Providers.AddRange(company1, company2);
             context.SaveChanges();
 
-            // Создание тестовых данных для ProviderProduct
             var product1 = new ProviderProduct
             {
                 ProviderId = company1.Id,
@@ -65,13 +70,12 @@ namespace ProvidersBase.Model.DataAccessLayer
             context.Products.AddRange(product1, product2, product3);
             context.SaveChanges();
 
-            // Создание тестовых данных для ProviderUser
             var user1 = new ProviderUser
             {
                 ProviderId = company1.Id,
                 Provider = company1,
                 Name = "User 1",
-                UserName = "user1",
+                Username = "user1",
                 Email = "user1@example.com",
                 PhoneNumber = "1234567890"
             };
@@ -81,7 +85,7 @@ namespace ProvidersBase.Model.DataAccessLayer
                 ProviderId = company1.Id,
                 Provider = company1,
                 Name = "User 2",
-                UserName = "user2",
+                Username = "user2",
                 Email = "user2@example.com",
                 PhoneNumber = "9876543210"
             };
@@ -91,7 +95,7 @@ namespace ProvidersBase.Model.DataAccessLayer
                 ProviderId = company2.Id,
                 Provider = company2,
                 Name = "User 3",
-                UserName = "user3",
+                Username = "user3",
                 Email = "user3@example.com",
                 PhoneNumber = "5555555555"
             };

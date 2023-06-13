@@ -12,7 +12,7 @@ namespace ProvidersBase.Model.Models
         [Column("company_title"), Required, MaxLength(50)]
         public string CompanyTitle { get; set; }
 
-        [Column("INN"), Required, MaxLength(10)] //The company tax number is equals 10 digits
+        [Column("INN"), Required, MinLength(10), MaxLength(10)] //The company tax number is mut be 10 digits
         public string INN { get; set; }
 
         [Column("email"), Required, EmailAddress, MaxLength(254)]
@@ -22,8 +22,8 @@ namespace ProvidersBase.Model.Models
         public string Address { get; set; }
 
         [NotMapped]
-        public ICollection<ProviderUser> Users { get; set; }
+        public ICollection<ProviderUser>? Users { get; set; }
         [NotMapped]
-        public ICollection<ProviderProduct> Products { get; set; }
+        public ICollection<ProviderProduct>? Products { get; set; }
     }
 }

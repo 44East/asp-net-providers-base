@@ -1,6 +1,9 @@
-﻿
+﻿using ProvidersBase.Model.Models;
 namespace ProvidersBase.Model.ViewModels
 {
+    /// <summary>
+    /// View model of <see cref="ProviderProduct"/> uses for creation a new object into DB, for safety it contains only primitive types
+    /// </summary>
     public class ProviderProductVM
     {
         public int Id { get; set; }

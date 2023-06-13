@@ -10,29 +10,42 @@
 <p>
     <a asp-page="Create">Create New</a>
 </p>
+<form asp-page="./Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find product by company INN:
+            <input type="text" name="SearchByINN" value="@Model.CurrentFilter" />
+            <input type="submit" value="Search" class="btn btn-primary" /> 
+            <a asp-page="./Index">Back to full List</a>
+        </p>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderProduct[0].Provider)
+                <a asp-action="Index" asp-route-sortOrder="@ViewBag.ProviderSort" />
+                @Html.DisplayNameFor(model => model.ProviderProducts[0].Provider)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderProduct[0].Title)
+                <a asp-action="Index" asp-route-sortOrder="@ViewBag.TitleSort" />
+                @Html.DisplayNameFor(model => model.ProviderProducts[0].Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderProduct[0].Description)
+                @Html.DisplayNameFor(model => model.ProviderProducts[0].Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderProduct[0].Price)
+                <a asp-action="Index" asp-route-sortOrder="@ViewBag.PriceSort" />
+                @Html.DisplayNameFor(model => model.ProviderProducts[0].Price)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderProduct[0].InPacking)
+                @Html.DisplayNameFor(model => model.ProviderProducts[0].InPacking)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.ProviderProduct) {
+@foreach (var item in Model.ProviderProducts) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Provider.CompanyTitle)

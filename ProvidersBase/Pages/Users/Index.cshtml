@@ -2,46 +2,59 @@
 @model ProvidersBase.Pages.Users.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Users";
 }
 
-<h1>Index</h1>
+<h1>Users</h1>
 
 <p>
     <a asp-page="Create">Create New</a>
 </p>
+<form asp-page="./Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find product by company INN:
+            <input type="text" name="SearchByINN" value="@Model.CurrentFilter" />
+            <input type="submit" value="Search" class="btn btn-primary" /> 
+            <a asp-page="./Index">Back to full List</a>
+        </p>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderUser[0].Provider)
+                 <a asp-action="Index" asp-route-sortOrder="@ViewBag.ProviderSort" />
+                @Html.DisplayNameFor(model => model.ProviderUsers[0].Provider)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderUser[0].Name)
+                 <a asp-action="Index" asp-route-sortOrder="@ViewBag.NameSort" />
+                @Html.DisplayNameFor(model => model.ProviderUsers[0].Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderUser[0].UserName)
+                 <a asp-action="Index" asp-route-sortOrder="@ViewBag.UsernameSort" />
+                @Html.DisplayNameFor(model => model.ProviderUsers[0].Username)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderUser[0].Email)
+                @Html.DisplayNameFor(model => model.ProviderUsers[0].Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderUser[0].PhoneNumber)
+                @Html.DisplayNameFor(model => model.ProviderUsers[0].PhoneNumber)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.ProviderUser) {
+@foreach (var item in Model.ProviderUsers) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Provider.Address)
+                @Html.DisplayFor(modelItem => item.Provider.CompanyTitle)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UserName)
+                @Html.DisplayFor(modelItem => item.Username)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Email)

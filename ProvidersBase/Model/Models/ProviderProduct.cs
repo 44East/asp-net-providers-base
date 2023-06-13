@@ -14,7 +14,7 @@ namespace ProvidersBase.Model.Models
         public int ProviderId { get; set; }
 
         [ForeignKey(nameof(ProviderId))]
-        public ProviderCompany Provider { get; set; }
+        public ProviderCompany? Provider { get; set; }
 
         [Column("title"), Required, MaxLength(50)]
         public string Title { get; set; }

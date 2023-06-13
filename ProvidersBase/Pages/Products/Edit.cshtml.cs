@@ -39,19 +39,36 @@ namespace ProvidersBase.Pages.Products
         
         public async Task<IActionResult> OnPostAsync(ProviderProduct providerProduct)
         {
-            if (providerProduct == null)
+            if (!ModelState.IsValid)
             {
+                ViewData["ProviderId"] = new SelectList(_context.Providers, "Id", "CompanyTitle");
                 return Page();
             }
-            _context.Products.Update(providerProduct);
-            await _context.SaveChangesAsync();
+            
+            _context.Attach(ProviderProduct).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProviderProductExists(ProviderProduct.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
             return RedirectToPage("./Index");
 
         }
-
         private bool ProviderProductExists(int id)
         {
-          return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
     }
 }

@@ -15,7 +15,7 @@ namespace ProvidersBase.Pages.Products
             _context = context;
         }
 
-      public ProviderProduct ProviderProduct { get; set; } = default!; 
+        public ProviderProduct ProviderProduct { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -23,7 +23,7 @@ namespace ProvidersBase.Pages.Products
             {
                 return NotFound();
             }
-
+            //Binding data from the conected tables
             var providerproduct = await _context.Products
                 .Include(p => p.Provider)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -31,7 +31,7 @@ namespace ProvidersBase.Pages.Products
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 ProviderProduct = providerproduct;
             }

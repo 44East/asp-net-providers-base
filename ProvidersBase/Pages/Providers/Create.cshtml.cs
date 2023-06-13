@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using ProvidersBase.Model.DataAccessLayer;
 using ProvidersBase.Model.Models;
+using ProvidersBase.Model.ViewModels;
 
 namespace ProvidersBase.Pages.Providers
 {
     public class CreateModel : PageModel
     {
-        private readonly ProvidersBase.Model.DataAccessLayer.ProvidersContext _context;
+        private readonly ProvidersContext _context;
 
-        public CreateModel(ProvidersBase.Model.DataAccessLayer.ProvidersContext context)
+        public CreateModel(ProvidersContext context)
         {
             _context = context;
         }
@@ -25,18 +21,18 @@ namespace ProvidersBase.Pages.Providers
         }
 
         [BindProperty]
-        public ProviderCompany ProviderCompany { get; set; } = default!;
-        
+        public ProviderCompanyVM ProviderCompanyVM { get; set; } = default!;
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.Providers == null || ProviderCompany == null)
+            if (!ModelState.IsValid || _context.Providers == null || ProviderCompanyVM == null)
             {
                 return Page();
             }
-
-            _context.Providers.Add(ProviderCompany);
+            //binding data from the ViewModel to the General model and insert it into the DB
+            var entry = _context.Add(new ProviderCompany());
+            entry.CurrentValues.SetValues(ProviderCompanyVM);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

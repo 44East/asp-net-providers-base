@@ -2,34 +2,46 @@
 @model ProvidersBase.Pages.Providers.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Providers";
 }
 
-<h1>Index</h1>
+<h1>Providers</h1>
 
 <p>
     <a asp-page="Create">Create New</a>
 </p>
+<form asp-page="./Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by INN:
+            <input type="text" name="SearchByINN" value="@Model.CurrentFilter" />
+            <input type="submit" value="Search" class="btn btn-primary" /> 
+            <a asp-page="./Index">Back to full List</a>
+        </p>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderCompany[0].CompanyTitle)
+                <a asp-action="Index" asp-route-sortOrder="@ViewBag.TitleSort" />
+                @Html.DisplayNameFor(model => model.ProviderCompanies[0].CompanyTitle)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderCompany[0].INN)
+                <a asp-action="Index" asp-route-sortOrder="@ViewBag.INNSort" />
+                @Html.DisplayNameFor(model => model.ProviderCompanies[0].INN)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderCompany[0].Email)
+                @Html.DisplayNameFor(model => model.ProviderCompanies[0].Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProviderCompany[0].Address)
+                @Html.DisplayNameFor(model => model.ProviderCompanies[0].Address)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.ProviderCompany) {
+@foreach (var item in Model.ProviderCompanies) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.CompanyTitle)

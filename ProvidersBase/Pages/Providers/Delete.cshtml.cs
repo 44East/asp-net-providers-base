@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ProvidersBase.Model.DataAccessLayer;
@@ -12,15 +8,15 @@ namespace ProvidersBase.Pages.Providers
 {
     public class DeleteModel : PageModel
     {
-        private readonly ProvidersBase.Model.DataAccessLayer.ProvidersContext _context;
+        private readonly ProvidersContext _context;
 
-        public DeleteModel(ProvidersBase.Model.DataAccessLayer.ProvidersContext context)
+        public DeleteModel(ProvidersContext context)
         {
             _context = context;
         }
 
         [BindProperty]
-      public ProviderCompany ProviderCompany { get; set; } = default!;
+        public ProviderCompany ProviderCompany { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -35,7 +31,7 @@ namespace ProvidersBase.Pages.Providers
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 ProviderCompany = providercompany;
             }
