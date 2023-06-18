@@ -1,10 +1,11 @@
 ## Application Description
 
-The application is a simple tool designed to manage various entities, including Providers, Users, and Products. It is built using **ASP.NET Core 6** and **RestAPI** to handle the data and functionality. Additionally, it utilizes **EF Core 6**, an ORM (Object-Relational Mapping) framework, for performing CRUD operations with a **MySQL** database.
+The application is a simple tool designed to manage various entities, including Providers, Users, and Products. It is built using **ASP.NET Core 6** and **Razor Pages** to handle the views and functionality. Additionally, it utilizes **EF Core 6**, an ORM (Object-Relational Mapping) framework, for performing CRUD operations with a **MySQL** database.
 
 ## Technologies Used
 
 - <a href="https://learn.microsoft.com/en-gb/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-6.0">ASP.NET Core 6</a>
+- <a href="https://learn.microsoft.com/en-gb/aspnet/core/razor-pages/?view=aspnetcore-6.0&tabs=visual-studio">Razor Pages</a>
 - <a href="https://learn.microsoft.com/ru-ru/ef/core/">Entity Framework Core 6</a>
 - <a href="https://dev.mysql.com/downloads/installer/">MySQL</a>
 
