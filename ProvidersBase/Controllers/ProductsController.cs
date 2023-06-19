@@ -52,17 +52,17 @@ namespace ProvidersBase.Controllers
         {
             if (string.IsNullOrEmpty(inn))
             {
-                 return NotFound("Inn not found");
+                return NotFound("Inn not found");
             }
             //Get collection all the products with all the providers objects
             var products = await _context.Products
                 .Include(p => p.Provider)
-                .Where(p=>p.Provider.INN.Equals(inn))
+                .Where(p => p.Provider.INN.Equals(inn))
                 .ToListAsync();
 
-            if (products.Count() > 0) 
-            { 
-                return Ok( _mapper.Map(products));
+            if (products.Count() > 0)
+            {
+                return Ok(_mapper.Map(products));
             }
             return NotFound($"Not found any {nameof(ProviderProduct)}");
 
@@ -78,9 +78,15 @@ namespace ProvidersBase.Controllers
             {
                 return BadRequest("The some fields don't have valid values");
             }
-
+            //Create a new instance and add it into collection
             var entry = _context.Add(new ProviderProduct());
+            //If there are problems during a transaction, all changes will be rolled back.
+            var transaction = _context.Database.BeginTransaction();
+
+            //Then mapping data from DTO to a new instance
             var product = _mapper.ReverseMap(providerProductDTO);
+
+            //And final mapping by EF Core
             entry.CurrentValues.SetValues(product);
 
             try
@@ -89,8 +95,12 @@ namespace ProvidersBase.Controllers
             }
             catch
             {
+                //Try to roll back all changes
+                await transaction.RollbackAsync();
                 throw;
             }
+            //If the transaction is successful, all changes will be committed to the database.
+            await transaction.CommitAsync();
             return Ok();
 
         }
@@ -115,19 +125,27 @@ namespace ProvidersBase.Controllers
             var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
 
             if (product != null)
-            {                
+            {
+                //If there are problems during a transaction, all changes will be rolled back.
+                var transaction = _context.Database.BeginTransaction();
+                //Set the upadating object
                 var entry = _context.Update(product);
-                //Mapping by EF Core
+                //Mapping by EF Core on updating object a new data
                 entry.CurrentValues.SetValues(providerProductDTO);
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return Ok();
+
                 }
                 catch
                 {
+                    //Try to roll back all changes
+                    await transaction.RollbackAsync();
                     throw;
                 }
+                //If the transaction is successful, all changes will be committed to the database.
+                await transaction.CommitAsync();
+                return Ok();
             }
             return NotFound($"{nameof(ProviderProduct)} not found");
         }
@@ -146,16 +164,22 @@ namespace ProvidersBase.Controllers
 
             if (product != null)
             {
+                //If there are problems during a transaction, all changes will be rolled back.
+                var transaction = _context.Database.BeginTransaction();
                 _context.Products.Remove(product);
                 try
-                { 
-                    await _context.SaveChangesAsync();
-                    return Ok();
-                }
-                catch 
                 {
+                    await _context.SaveChangesAsync();
+                }
+                catch
+                {
+                    //Try to roll back all changes
+                    await transaction.RollbackAsync();
                     throw;
                 }
+                //If the transaction is successful, all changes will be committed to the database.
+                await transaction.CommitAsync();
+                return Ok();
             }
             return NotFound($"The {nameof(ProviderProduct)} cann't be find");
         }

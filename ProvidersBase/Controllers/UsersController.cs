@@ -82,8 +82,13 @@ namespace ProvidersBase.Controllers
             }
             //Create a new instance and add it into collection 
             var entry = _context.Add(new ProviderUser());
-            //Then mapping by EF Core
+            //If there are problems during a transaction, all changes will be rolled back.
+            var transaction = _context.Database.BeginTransaction();
+
+            //Then mapping data from DTO to a new instance
             var user = _mapper.ReverseMap(providerUserDTO);
+
+            //And final mapping by EF Core
             entry.CurrentValues.SetValues(user);
 
             try
@@ -92,8 +97,12 @@ namespace ProvidersBase.Controllers
             }
             catch
             {
+                //Try to roll back all changes
+                await transaction.RollbackAsync();
                 throw;
             }
+            //If the transaction is successful, all changes will be committed to the database.
+            await transaction.CommitAsync();
             return Ok();
 
         }
@@ -119,18 +128,25 @@ namespace ProvidersBase.Controllers
 
             if (user != null)
             {
+                //If there are problems during a transaction, all changes will be rolled back.
+                var transaction = _context.Database.BeginTransaction();
+                //Set the upadating object
                 var entry = _context.Update(user);
                 //Mapping by EF Core
                 entry.CurrentValues.SetValues(providerUserDTO);
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return Ok();
                 }
                 catch
                 {
+                    //Try to roll back all changes
+                    await transaction.RollbackAsync();
                     throw;
                 }
+                //If the transaction is successful, all changes will be committed to the database.
+                await transaction.CommitAsync();
+                return Ok();
             }
             return NotFound($"{nameof(ProviderUser)} not found");
         }
@@ -149,16 +165,22 @@ namespace ProvidersBase.Controllers
 
             if (user != null)
             {
+                //If there are problems during a transaction, all changes will be rolled back.
+                var transaction = _context.Database.BeginTransaction();
                 _context.Users.Remove(user);
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return Ok();
                 }
                 catch
                 {
+                    //Try to roll back all changes
+                    await transaction.RollbackAsync();
                     throw;
                 }
+                //If the transaction is successful, all changes will be committed to the database.
+                await transaction.CommitAsync();
+                return Ok();
             }
             return NotFound($"The {nameof(ProviderUser)} cann't be find");
         }
