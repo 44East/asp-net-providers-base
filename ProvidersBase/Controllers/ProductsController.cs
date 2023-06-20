@@ -81,7 +81,7 @@ namespace ProvidersBase.Controllers
             //Create a new instance and add it into collection
             var entry = _context.Add(new ProviderProduct());
             //If there are problems during a transaction, all changes will be rolled back.
-            var transaction = _context.Database.BeginTransaction();
+            using var transaction = _context.Database.BeginTransaction();
 
             //Then mapping data from DTO to a new instance
             var product = _mapper.ReverseMap(providerProductDTO);
@@ -127,7 +127,7 @@ namespace ProvidersBase.Controllers
             if (product != null)
             {
                 //If there are problems during a transaction, all changes will be rolled back.
-                var transaction = _context.Database.BeginTransaction();
+                using var transaction = _context.Database.BeginTransaction();
                 //Set the upadating object
                 var entry = _context.Update(product);
                 //Mapping by EF Core on updating object a new data
@@ -165,7 +165,7 @@ namespace ProvidersBase.Controllers
             if (product != null)
             {
                 //If there are problems during a transaction, all changes will be rolled back.
-                var transaction = _context.Database.BeginTransaction();
+                using var transaction = _context.Database.BeginTransaction();
                 _context.Products.Remove(product);
                 try
                 {
