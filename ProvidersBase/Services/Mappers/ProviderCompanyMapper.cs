@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ProvidersBase.Model.DataAccessLayer;
-using ProvidersBase.Model.DTO;
-using ProvidersBase.Model.Models;
+﻿
+using ProvidersBase.Models.DTO;
+using ProvidersBase.Models.Entities;
 
-namespace ProvidersBase.Model.Mappers
+namespace ProvidersBase.Services.Mappers
 {
     public class ProviderCompanyMapper : IMapper<ProviderCompany, ProviderCompanyDTO>
     {

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProvidersBase.Model.Models
+namespace ProvidersBase.Models.Entities
 {
     [Table("Products")]
     public class ProviderProduct

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProvidersBase.Model.Models;
+using ProvidersBase.Models.Entities;
 
-namespace ProvidersBase.Model.DataAccessLayer
+namespace ProvidersBase.Services.DataAccessLayer
 {
     /// <summary>
     /// Represents a database context for the Providers Base application, allowing access to the <see cref="ProviderCompany"/>, <see cref="ProviderUser"/>, and <see cref="ProviderProduct"/> tables.

@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ProvidersBase.Model.DataAccessLayer;
-using ProvidersBase.Model.DTO;
-using ProvidersBase.Model.Mappers;
-using ProvidersBase.Model.Models;
+using ProvidersBase.Models.DTO;
+using ProvidersBase.Models.Entities;
+using ProvidersBase.Services.DataAccessLayer;
 
 namespace ProvidersBase.Controllers
 {
@@ -11,22 +9,19 @@ namespace ProvidersBase.Controllers
     [Route("/products")]
     public class ProductsController : ControllerBase
     {
-        private readonly IMapper<ProviderProduct, ProviderProductDTO> _mapper;
-        private readonly ProvidersContext _context;
+        private readonly IEntityTransactor<ProviderProductDTO> _entityTransactor;
 
-        public ProductsController(IMapper<ProviderProduct, ProviderProductDTO> mapper, ProvidersContext context)
+        public ProductsController(IEntityTransactor<ProviderProductDTO> entityTransactor)
         {
-            _mapper = mapper;
-            _context = context;
+            _entityTransactor = entityTransactor;
         }
         /// <summary>
-        /// Get all <see cref="ProviderProduct"/> from DB
+        /// Get all <see cref="ProviderProduct"/> from DB in DTO form
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            //Mapping all the objects by IMapper
-            return Ok(_mapper.Map(await _context.Products.ToListAsync()));
+            return Ok(await _entityTransactor.GetAllEntitiesAsync());
         }
         /// <summary>
         /// Get the <see cref="ProviderProduct"/> by Id from DB
@@ -35,13 +30,14 @@ namespace ProvidersBase.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-
-            if (product == null)
+            try
             {
-                return NotFound($"Not found any {nameof(ProviderProduct)}");
+                return Ok(await _entityTransactor.GetEntityByIdAsync(id));
             }
-            return Ok(_mapper.Map(product));
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         /// <summary>
         /// Get the <see cref="ProviderProduct"/> by company inn from DB
@@ -50,22 +46,14 @@ namespace ProvidersBase.Controllers
         [HttpGet("inn/{inn}")]
         public async Task<IActionResult> GetAllProductsByProviderINN(string inn)
         {
-            if (string.IsNullOrEmpty(inn))
+            try
             {
-                return NotFound("Inn not found");
+                return Ok(await _entityTransactor.GetAllEntityByINNAsync(inn));
             }
-            //Get collection all the products with all the providers objects
-            var products = await _context.Products
-                .Include(p => p.Provider)
-                .Where(p => p.Provider.INN.Equals(inn))
-                .ToListAsync();
-
-            if (products.Count() > 0)
+            catch (Exception ex)
             {
-                return Ok(_mapper.Map(products));
+                return BadRequest(ex.Message);
             }
-            return NotFound($"Not found any {nameof(ProviderProduct)}");
-
         }
         /// <summary>
         /// Create the new <see cref="ProviderProduct"/> object in DB
@@ -78,31 +66,14 @@ namespace ProvidersBase.Controllers
             {
                 return BadRequest("The some fields don't have valid values");
             }
-            //Create a new instance and add it into collection
-            var entry = _context.Add(new ProviderProduct());
-            //If there are problems during a transaction, all changes will be rolled back.
-            using var transaction = _context.Database.BeginTransaction();
-
-            //Then mapping data from DTO to a new instance
-            var product = _mapper.ReverseMap(providerProductDTO);
-
-            //And final mapping by EF Core
-            entry.CurrentValues.SetValues(product);
-
             try
             {
-                await _context.SaveChangesAsync();
+                return Ok($"Is the operation completed - {await _entityTransactor.CreateEntityAsync(providerProductDTO)}?");
             }
-            catch
+            catch (Exception ex)
             {
-                //Try to roll back all changes
-                await transaction.RollbackAsync();
-                throw;
+                return BadRequest(ex.Message);
             }
-            //If the transaction is successful, all changes will be committed to the database.
-            await transaction.CommitAsync();
-            return Ok();
-
         }
         /// <summary>
         /// Edit a current <see cref="ProviderProduct"/> object in DB
@@ -116,38 +87,14 @@ namespace ProvidersBase.Controllers
             {
                 return BadRequest("The some fields don't have valid values");
             }
-            //Check the provider field for existing it in DB
-            if (!await _context.Providers.AnyAsync(p => p.Id == providerProductDTO.ProviderId))
+            try
             {
-                return BadRequest($"The {nameof(ProviderCompany)} is not exist!");
+                return Ok($"Is the operation completed - {await _entityTransactor.UpdateEntityAsync(id, providerProductDTO)}?");
             }
-            //Try to find a user object
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-
-            if (product != null)
+            catch (Exception ex)
             {
-                //If there are problems during a transaction, all changes will be rolled back.
-                using var transaction = _context.Database.BeginTransaction();
-                //Set the upadating object
-                var entry = _context.Update(product);
-                //Mapping by EF Core on updating object a new data
-                entry.CurrentValues.SetValues(providerProductDTO);
-                try
-                {
-                    await _context.SaveChangesAsync();
-
-                }
-                catch
-                {
-                    //Try to roll back all changes
-                    await transaction.RollbackAsync();
-                    throw;
-                }
-                //If the transaction is successful, all changes will be committed to the database.
-                await transaction.CommitAsync();
-                return Ok();
+                return BadRequest(ex.Message);
             }
-            return NotFound($"{nameof(ProviderProduct)} not found");
         }
         /// <summary>
         /// Delete the current <see cref="ProviderProduct"/> object in DB
@@ -156,32 +103,18 @@ namespace ProvidersBase.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int? id)
         {
-            if (id == null || _context.Products == null)
+            if (id == null)
             {
                 return BadRequest();
             }
-            var product = await _context.Products.FindAsync(id);
-
-            if (product != null)
+            try
             {
-                //If there are problems during a transaction, all changes will be rolled back.
-                using var transaction = _context.Database.BeginTransaction();
-                _context.Products.Remove(product);
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch
-                {
-                    //Try to roll back all changes
-                    await transaction.RollbackAsync();
-                    throw;
-                }
-                //If the transaction is successful, all changes will be committed to the database.
-                await transaction.CommitAsync();
-                return Ok();
+                return Ok($"Is the operation completed - {await _entityTransactor.DeleteEntityAsync(id)}?");
             }
-            return NotFound($"The {nameof(ProviderProduct)} cann't be find");
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
     }

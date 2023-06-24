@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using ProvidersBase.Model.Models;
+using ProvidersBase.Models.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ProvidersBase.Model.DTO
+namespace ProvidersBase.Models.DTO
 {
     /// <summary>
     /// View model of <see cref="ProviderProduct"/> uses for creation a new object into DB, for safety it contains only primitive types

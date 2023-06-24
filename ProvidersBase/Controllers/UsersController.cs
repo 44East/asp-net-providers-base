@@ -1,23 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ProvidersBase.Model.DataAccessLayer;
-using ProvidersBase.Model.DTO;
-using ProvidersBase.Model.Mappers;
-using ProvidersBase.Model.Models;
+using ProvidersBase.Models.DTO;
+using ProvidersBase.Models.Entities;
+using ProvidersBase.Services.DataAccessLayer;
 
 namespace ProvidersBase.Controllers
 {
     [ApiController]
-    [Route("/users")]
+    [Route("api/users")]
     public class UsersController : ControllerBase
     {
-        private readonly IMapper<ProviderUser, ProviderUserDTO> _mapper;
-        private readonly ProvidersContext _context;
+        private readonly IEntityTransactor<ProviderUserDTO> _entityTransactor;
 
-        public UsersController(IMapper<ProviderUser, ProviderUserDTO> mapper, ProvidersContext context)
+        public UsersController(IEntityTransactor<ProviderUserDTO> entityTransactor)
         {
-            _mapper = mapper;
-            _context = context;
+            _entityTransactor = entityTransactor;
         }
         /// <summary>
         /// Get all <see cref="ProviderUser"/> from DB
@@ -25,8 +21,7 @@ namespace ProvidersBase.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
-            //Mapping all the objects by IMapper
-            return Ok(_mapper.Map(await _context.Users.ToListAsync()));
+            return Ok(await _entityTransactor.GetAllEntitiesAsync());
         }
 
         /// <summary>
@@ -36,13 +31,14 @@ namespace ProvidersBase.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-            if (user == null)
+            try
             {
-                return NotFound($"Not found any {nameof(ProviderUser)}");
+                return Ok(await _entityTransactor.GetEntityByIdAsync(id));
             }
-            return Ok(_mapper.Map(user));
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         /// <summary>
         /// Get the <see cref="ProviderUser"/> by company inn from DB
@@ -51,22 +47,14 @@ namespace ProvidersBase.Controllers
         [HttpGet("inn/{inn}")]
         public async Task<IActionResult> GetAllUsersByProviderINN(string inn)
         {
-            if (string.IsNullOrEmpty(inn))
+            try
             {
-                return NotFound("Inn not found");
+                return Ok(await _entityTransactor.GetAllEntityByINNAsync(inn));
             }
-            //Get collection all the users with all the providers objects
-            var users = await _context.Users
-                .Include(u => u.Provider)
-                .Where(u => u.Provider.INN.Equals(inn))
-                .ToListAsync();
-
-            if (users.Count() > 0)
+            catch (Exception ex)
             {
-                return Ok(_mapper.Map(users));
+                return BadRequest(ex.Message);
             }
-            return NotFound($"Not found any {nameof(ProviderUser)}");
-
         }
 
         /// <summary>
@@ -80,31 +68,14 @@ namespace ProvidersBase.Controllers
             {
                 return BadRequest("The some fields don't have valid values");
             }
-            //Create a new instance and add it into collection 
-            var entry = _context.Add(new ProviderUser());
-            //If there are problems during a transaction, all changes will be rolled back.
-            using var transaction = _context.Database.BeginTransaction();
-
-            //Then mapping data from DTO to a new instance
-            var user = _mapper.ReverseMap(providerUserDTO);
-
-            //And final mapping by EF Core
-            entry.CurrentValues.SetValues(user);
-
             try
             {
-                await _context.SaveChangesAsync();
+                return Ok($"Is the operation completed - {await _entityTransactor.CreateEntityAsync(providerUserDTO)}?");
             }
-            catch
+            catch (Exception ex)
             {
-                //Try to roll back all changes
-                await transaction.RollbackAsync();
-                throw;
+                return BadRequest(ex.Message);
             }
-            //If the transaction is successful, all changes will be committed to the database.
-            await transaction.CommitAsync();
-            return Ok();
-
         }
         /// <summary>
         /// Edit a current <see cref="ProviderUser"/> object in DB
@@ -118,37 +89,14 @@ namespace ProvidersBase.Controllers
             {
                 return BadRequest("The some fields don't have valid values");
             }
-            //Check the provider field for existing it in DB
-            if (!await _context.Providers.AnyAsync(p => p.Id == providerUserDTO.ProviderId))
+            try
             {
-                return BadRequest($"The {nameof(ProviderUser)} is not exist!");
+                return Ok($"Is the operation completed - {await _entityTransactor.UpdateEntityAsync(id, providerUserDTO)}?");
             }
-            //Try to find a user object
-            var user = await _context.Products.FirstOrDefaultAsync(u => u.Id == id);
-
-            if (user != null)
+            catch (Exception ex)
             {
-                //If there are problems during a transaction, all changes will be rolled back.
-                using var transaction = _context.Database.BeginTransaction();
-                //Set the upadating object
-                var entry = _context.Update(user);
-                //Mapping by EF Core
-                entry.CurrentValues.SetValues(providerUserDTO);
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch
-                {
-                    //Try to roll back all changes
-                    await transaction.RollbackAsync();
-                    throw;
-                }
-                //If the transaction is successful, all changes will be committed to the database.
-                await transaction.CommitAsync();
-                return Ok();
+                return BadRequest(ex.Message);
             }
-            return NotFound($"{nameof(ProviderUser)} not found");
         }
         /// <summary>
         /// Delete the current <see cref="ProviderUser"/> object in DB
@@ -157,32 +105,18 @@ namespace ProvidersBase.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int? id)
         {
-            if (id == null || _context.Users == null)
+            if (id == null)
             {
                 return BadRequest();
             }
-            var user = await _context.Users.FindAsync(id);
-
-            if (user != null)
+            try
             {
-                //If there are problems during a transaction, all changes will be rolled back.
-                using var transaction = _context.Database.BeginTransaction();
-                _context.Users.Remove(user);
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch
-                {
-                    //Try to roll back all changes
-                    await transaction.RollbackAsync();
-                    throw;
-                }
-                //If the transaction is successful, all changes will be committed to the database.
-                await transaction.CommitAsync();
-                return Ok();
+                return Ok($"Is the operation completed - {await _entityTransactor.DeleteEntityAsync(id)}?");
             }
-            return NotFound($"The {nameof(ProviderUser)} cann't be find");
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

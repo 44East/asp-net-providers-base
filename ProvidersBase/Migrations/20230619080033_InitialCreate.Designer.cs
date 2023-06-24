@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProvidersBase.Model.DataAccessLayer;
+using ProvidersBase.Services.DataAccessLayer;
 
 #nullable disable
 
@@ -20,7 +20,7 @@ namespace ProvidersBase.Migrations
                 .HasAnnotation("ProductVersion", "6.0.18")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("ProvidersBase.Model.Models.ProviderCompany", b =>
+            modelBuilder.Entity("ProvidersBase.Entities.Entities.ProviderCompany", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -56,7 +56,7 @@ namespace ProvidersBase.Migrations
                     b.ToTable("Providers");
                 });
 
-            modelBuilder.Entity("ProvidersBase.Model.Models.ProviderProduct", b =>
+            modelBuilder.Entity("ProvidersBase.Entities.Entities.ProviderProduct", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -95,7 +95,7 @@ namespace ProvidersBase.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("ProvidersBase.Model.Models.ProviderUser", b =>
+            modelBuilder.Entity("ProvidersBase.Entities.Entities.ProviderUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,9 +137,9 @@ namespace ProvidersBase.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ProvidersBase.Model.Models.ProviderProduct", b =>
+            modelBuilder.Entity("ProvidersBase.Entities.Entities.ProviderProduct", b =>
                 {
-                    b.HasOne("ProvidersBase.Model.Models.ProviderCompany", "Provider")
+                    b.HasOne("ProvidersBase.Entities.Entities.ProviderCompany", "Provider")
                         .WithMany("Products")
                         .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -148,9 +148,9 @@ namespace ProvidersBase.Migrations
                     b.Navigation("Provider");
                 });
 
-            modelBuilder.Entity("ProvidersBase.Model.Models.ProviderUser", b =>
+            modelBuilder.Entity("ProvidersBase.Entities.Entities.ProviderUser", b =>
                 {
-                    b.HasOne("ProvidersBase.Model.Models.ProviderCompany", "Provider")
+                    b.HasOne("ProvidersBase.Entities.Entities.ProviderCompany", "Provider")
                         .WithMany("Users")
                         .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -159,7 +159,7 @@ namespace ProvidersBase.Migrations
                     b.Navigation("Provider");
                 });
 
-            modelBuilder.Entity("ProvidersBase.Model.Models.ProviderCompany", b =>
+            modelBuilder.Entity("ProvidersBase.Entities.Entities.ProviderCompany", b =>
                 {
                     b.Navigation("Products");
 

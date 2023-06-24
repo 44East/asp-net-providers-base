@@ -1,9 +1,9 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using ProvidersBase.Model.Models;
+using ProvidersBase.Models.Entities;
 
-namespace ProvidersBase.Model.DTO
+namespace ProvidersBase.Models.DTO
 {
     /// <summary>
     /// View model of <see cref="ProviderUser"/> uses for creation a new object into DB, for safety it contains only primitive types

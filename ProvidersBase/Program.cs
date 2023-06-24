@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using ProvidersBase.Model.DataAccessLayer;
-using ProvidersBase.Model.DTO;
-using ProvidersBase.Model.Mappers;
-using ProvidersBase.Model.Models;
+using ProvidersBase.Models.DTO;
+using ProvidersBase.Models.Entities;
+using ProvidersBase.Services.DataAccessLayer;
+using ProvidersBase.Services.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,14 +29,20 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 //Add controers for restAPI
 builder.Services.AddControllers();
 
-//Add mapping interfaces in DI
+//Add mapping services in DI
 builder.Services.AddScoped<IMapper<ProviderCompany, ProviderCompanyDTO>, ProviderCompanyMapper>();
 builder.Services.AddScoped<IMapper<ProviderProduct, ProviderProductDTO>, ProviderProductMapper>();
 builder.Services.AddScoped<IMapper<ProviderUser, ProviderUserDTO>, ProviderUserMapper>();
 
+//Add transaction services in DI
+builder.Services.AddScoped<IEntityTransactor<ProviderCompanyDTO>, ProviderCompanyTransactor>();
+builder.Services.AddScoped<IEntityTransactor<ProviderProductDTO>,  ProviderProductTransactor>();
+builder.Services.AddScoped<IEntityTransactor<ProviderUserDTO>, ProviderUserTransactor>();
+
 
 var app = builder.Build();
 
+app.UseCors("CorsPolicy");
 
 // This middleware helps to detect and diagnose errors with Entity Framework Core migrations.
 app.UseDeveloperExceptionPage();
@@ -51,7 +57,8 @@ using (var scope = app.Services.CreateScope())
 
     var context = services.GetRequiredService<ProvidersContext>();
     context.Database.EnsureCreated();
-    DBInitializer.GenerateTestData(context);
+    //For first start use the migrations
+    //context.Database.Migrate();
 }
 
 
@@ -61,7 +68,6 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
-app.UseCors("CorsPolicy");
 
 
 app.Run();

@@ -1,7 +1,7 @@
-﻿using ProvidersBase.Model.DTO;
-using ProvidersBase.Model.Models;
+﻿using ProvidersBase.Models.DTO;
+using ProvidersBase.Models.Entities;
 
-namespace ProvidersBase.Model.Mappers
+namespace ProvidersBase.Services.Mappers
 {
     public class ProviderUserMapper : IMapper<ProviderUser, ProviderUserDTO>
     {
